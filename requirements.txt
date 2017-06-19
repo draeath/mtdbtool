@@ -1,1 +1,5 @@
 requests>=2.18.1
+
+# not required for runtime
+#flake8>=3.3.0
+#pylint>=1.7.1
