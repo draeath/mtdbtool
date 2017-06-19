@@ -6,8 +6,9 @@ import requests
 from datetime import timedelta
 from email.utils import parsedate_tz, mktime_tz
 
-# todo: handle updating file and deal with network and file I/O exceptions better
-# network failure with good local file = continue with warning?
+
+# todo: handle updating file and deal with network and file I/O exceptions
+# better. network failure with good local file = continue with warning?
 def downloadDB(url: str, filename: str):
 
     if os.path.exists(filename):
@@ -16,8 +17,8 @@ def downloadDB(url: str, filename: str):
         fmtime = 0
 
     try:
-        headers = requests.head(url, allow_redirects=True).headers.get('Last-Modified')
-        umtime = mktime_tz(parsedate_tz(headers))
+        headers = requests.head(url, allow_redirects=True)
+        umtime = mktime_tz(parsedate_tz(headers.get('Last-Modified')))
     except Exception as e:
         umtime = 0
 
@@ -29,14 +30,19 @@ def downloadDB(url: str, filename: str):
 
 
 def main():
-    argparser = argparse.ArgumentParser(description="Do stuff and things with Magnatune's database export.")
-    argparser.add_argument('--dbfetch', action='store_true', required=False,
-                           help='Disable update/fetch of remote database.')
-    argparser.add_argument('--dburl', default='http://he3.magnatune.com/info/sqlite_normalized.db',
-                           required=False, metavar='URL',
-                           help='URL of remote sqlite database.')
-    argparser.add_argument('--dbfile', default='./sqlite_normalized.db', required=False, metavar='FILE',
-                           help='Path to local copy of sqlite database.')
+    argparser = argparse.ArgumentParser(
+            description="Do stuff and things with Magnatune's database export.")
+    argparser.add_argument(
+            '--dbfetch', action='store_true', required=False,
+            help='Disable update/fetch of remote database.')
+    argparser.add_argument(
+            '--dburl', metavar='URL', required=False,
+            default='http://he3.magnatune.com/info/sqlite_normalized.db',
+            help='URL of remote sqlite database.')
+    argparser.add_argument(
+            '--dbfile', metavar='FILE', required=False,
+            default='./sqlite_normalized.db',
+            help='Path to local copy of sqlite database.')
     argparser.add_argument('verb', metavar='command')
     argparser.add_argument('nouns', metavar='arguments', nargs=argparse.REMAINDER)
     args = argparser.parse_args()
@@ -44,6 +50,7 @@ def main():
     # todo: deal with any exceptions from downloadDB() appropriately
     if args.dbfetch:
         downloadDB(url=args.dburl, filename=args.dbfile)
+
 
 if __name__ == "__main__":
     main()
