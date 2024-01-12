@@ -1,4 +1,0 @@
-Normalized SQLite export of all Magnatune data
-http://he3.magnatune.com/info/sqlite_normalized.db
-
-More info: http://magnatune.com/info/sqlite-normalized
